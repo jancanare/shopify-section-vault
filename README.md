@@ -19,7 +19,7 @@ Most "off-the-shelf" Shopify themes are rigid. This vault provides **bespoke Liq
 | Section Name | Key Features | Category |
 | :--- | :--- | :--- |
 | [Comparison Table (Pro)](./sections/comparison-tables/standard-pro/) | Logic-based icon toggles, mobile slider, custom winner styling. | Landing Page / Conversion |
-| *[Trust Badge Bar (WIP)]* | SVG-based, merchant-editable icons, responsive grid. | Social Proof |
+| [Trust Badge Bar](./sections/trust-bars/pro-trust-bar/) | SVG-based, merchant-editable icons, responsive grid. | Social Proof |
 | *[Before/After Slider (Future)]* | Interactive reveal slider for results-driven brands. | Product Education |
 
 ---
