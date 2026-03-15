@@ -9,18 +9,21 @@
     --position: 50%;
   }
 
-  /* The container now follows the natural height of the first image */
+  /* Fixed height container based on aspect ratio setting */
   .ba-container-{{ section.id }} {
     position: relative;
     width: 100%;
-    line-height: 0; /* Removes tiny gap at bottom of images */
+    aspect-ratio: {{ section.settings.aspect_ratio }};
+    line-height: 0;
+    background: #f4f4f4;
   }
 
   .ba-image-{{ section.id }} {
     display: block;
     width: 100%;
-    height: auto; /* Maintains natural aspect ratio */
-    object-fit: contain;
+    height: 100%;
+    /* This ensures both images fill the container identicaly */
+    object-fit: cover;
   }
 
   .ba-after-{{ section.id }} {
@@ -68,6 +71,25 @@
     font-weight: bold;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
   }
+
+  .ba-label {
+    position: absolute;
+    top: 15px;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 11px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 6;
+    backdrop-filter: blur(4px);
+  }
+  .ba-label-before { left: 15px; }
+  .ba-label-after { right: 15px; }
+
 {%- endstyle -%}
 
 <div class="ba-slider-{{ section.id }}" id="Slider-{{ section.id }}">
@@ -79,7 +101,7 @@
       {% if section.settings.before_image != blank %}
         {{ section.settings.before_image | image_url: width: 1500 | image_tag: class: img_class, loading: 'eager', fetchpriority: 'high' }}
       {% else %}
-        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg ba-image-' | append: section.id }}
       {% endif %}
     </div>
 
@@ -87,12 +109,17 @@
       {% if section.settings.after_image != blank %}
         {{ section.settings.after_image | image_url: width: 1500 | image_tag: class: img_class, loading: 'eager', fetchpriority: 'high' }}
       {% else %}
-        {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg ba-image-' | append: section.id }}
       {% endif %}
     </div>
 
     <div class="ba-handle-{{ section.id }}" aria-hidden="true"></div>
     
+    {%- if section.settings.show_labels -%}
+      <div class="ba-label ba-label-before">{{ section.settings.label_before }}</div>
+      <div class="ba-label ba-label-after">{{ section.settings.label_after }}</div>
+    {%- endif -%}
+
     <input 
       type="range" 
       min="0" 
@@ -122,6 +149,18 @@
     { "type": "image_picker", "id": "before_image", "label": "Before Image" },
     { "type": "image_picker", "id": "after_image", "label": "After Image" },
     {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Image Aspect Ratio",
+      "options": [
+        { "value": "16 / 9", "label": "Landscape (16:9)" },
+        { "value": "4 / 3", "label": "Standard (4:3)" },
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "3 / 4", "label": "Portrait (3:4)" }
+      ],
+      "default": "16 / 9"
+    },
+    {
       "type": "range",
       "id": "max_width",
       "min": 400,
@@ -130,7 +169,11 @@
       "unit": "px",
       "label": "Section Max Width",
       "default": 1000
-    }
+    },
+    { "type": "header", "content": "Labels" },
+    { "type": "checkbox", "id": "show_labels", "label": "Show Labels", "default": true },
+    { "type": "text", "id": "label_before", "label": "Before Label", "default": "Before" },
+    { "type": "text", "id": "label_after", "label": "After Label", "default": "After" }
   ],
   "presets": [
     { "name": "Before/After Slider" }
