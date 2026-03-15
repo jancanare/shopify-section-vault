@@ -1,0 +1,137 @@
+{%- style -%}
+  .ba-slider-{{ section.id }} {
+    position: relative;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 40px auto;
+    overflow: hidden;
+    user-select: none;
+    border-radius: 8px;
+    --position: 50%;
+  }
+
+  .ba-container-{{ section.id }} {
+    position: relative;
+    aspect-ratio: 16 / 9;
+  }
+
+  .ba-image-{{ section.id }} {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ba-after-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 0 0 var(--position));
+  }
+
+  .ba-input-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: ew-resize;
+    z-index: 10;
+  }
+
+  .ba-handle-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--position);
+    width: 2px;
+    background: white;
+    pointer-events: none;
+    z-index: 5;
+    transform: translateX(-50%);
+  }
+
+  .ba-handle-{{ section.id }}::after {
+    content: "↔";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+{%- endstyle -%}
+
+<div class="ba-slider-{{ section.id }}" id="Slider-{{ section.id }}">
+  <div class="ba-container-{{ section.id }}">
+    
+    {% capture img_class %}ba-image-{{ section.id }}{% endcapture %}
+
+    <div class="ba-before-{{ section.id }}">
+      {% if section.settings.before_image != blank %}
+        {{ section.settings.before_image | image_url: width: 1500 | image_tag: class: img_class }}
+      {% else %}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+
+    <div class="ba-after-{{ section.id }}">
+      {% if section.settings.after_image != blank %}
+        {{ section.settings.after_image | image_url: width: 1500 | image_tag: class: img_class }}
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+
+    <div class="ba-handle-{{ section.id }}" aria-hidden="true"></div>
+    
+    <input 
+      type="range" 
+      min="0" 
+      max="100" 
+      value="50" 
+      class="ba-input-{{ section.id }}"
+      aria-label="Image comparison slider"
+    >
+  </div>
+</div>
+
+<script>
+  (function() {
+    const slider = document.querySelector('#Slider-{{ section.id }}');
+    const input = slider.querySelector('input');
+    
+    input.addEventListener('input', (e) => {
+      slider.style.setProperty('--position', `${e.target.value}%`);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Before/After Slider",
+  "settings": [
+    { "type": "image_picker", "id": "before_image", "label": "Before Image" },
+    { "type": "image_picker", "id": "after_image", "label": "After Image" },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 400,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Section Max Width",
+      "default": 1000
+    }
+  ],
+  "presets": [
+    { "name": "Before/After Slider" }
+  ]
+}
+{% endschema %}
