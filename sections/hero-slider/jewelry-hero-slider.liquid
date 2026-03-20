@@ -1,0 +1,267 @@
+{%- style -%}
+  .hero-wrapper-{{ section.id }} {
+    position: relative;
+    height: 80vh;
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+    display: flex;
+  }
+
+  .hero-slide-{{ section.id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    z-index: 1;
+  }
+
+  .hero-slide-{{ section.id }}.active {
+    opacity: 1;
+    z-index: 2;
+  }
+
+  .hero-bg-{{ section.id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-overlay-{{ section.id }} {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+    z-index: 3;
+  }
+
+  .hero-content-{{ section.id }} {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    padding: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .hero-title-{{ section.id }} {
+    font-family: serif; 
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    margin: 0;
+    line-height: 1.1;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .hero-subheading-{{ section.id }} {
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    margin-top: 10px;
+    color: {{ section.settings.subtext_color }};
+  }
+
+  .hero-description-{{ section.id }} {
+    max-width: 350px; 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+    line-height: 1.6;
+    /* This links to your new schema ID */
+    color: {{ section.settings.description_color }}; 
+  }
+
+  .hero-btn-{{ section.id }} {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 40px;
+    text-decoration: none;
+    color: #000;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .hero-btn-{{ section.id }}:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+  }
+
+  .bottom-row-{{ section.id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    color: #fff; /* Description and default text color */
+  }
+
+  .nav-arrows-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 5;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .arrow-{{ section.id }} {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    pointer-events: auto;
+    opacity: 0.6;
+    transition: 0.3s;
+  }
+
+  .arrow-{{ section.id }}:hover { opacity: 1; }
+
+ @media (max-width: 767px) {
+    .bottom-row-{{ section.id }} {
+      flex-direction: column;
+      align-items: flex-start; /* Keeps the description at the top */
+      gap: 24px;               /* Adds space between description and buttons */
+    }
+
+    /* Target the button container */
+    .hero-buttons-{{ section.id }} {
+      display: flex;
+      flex-direction: column;  /* This is the magic for stacking */
+      width: 100%;             /* Makes the buttons fill the width */
+      gap: 12px;               /* Space between the two buttons */
+    }
+
+    /* Style the buttons for mobile */
+    .hero-btn-{{ section.id }} {
+  width: 100%;             /* Fills the container width */
+  display: flex;           /* Required for justify-content to work */
+  justify-content: center; /* Centers text horizontally */
+  align-items: center;     /* Centers text vertically */
+  text-align: center;      /* Fallback for older browsers */
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  text-decoration: none;   /* Removes the default link underline */
+}
+
+    .hero-wrapper-{{ section.id }} { 
+      height: 85vh;            /* Slightly taller to fit the stacked content */
+    }
+
+    .hero-title-{{ section.id }} {
+      font-size: 3rem;         /* Shrinks the title so it doesn't wrap awkwardly */
+    }
+  }
+{%- endstyle -%}
+
+<section class="hero-wrapper-{{ section.id }}" id="Hero-{{ section.id }}">
+  <div class="hero-overlay-{{ section.id }}"></div>
+  
+  {%- assign hero_img_class = 'hero-bg-' | append: section.id -%}
+
+  {% for block in section.blocks %}
+    <div class="hero-slide-{{ section.id }} {% if forloop.first %}active{% endif %}" {{ block.shopify_attributes }}>
+      {% if block.settings.image != blank %}
+        {{ block.settings.image | image_url: width: 2000 | image_tag: class: hero_img_class }}
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag: hero_img_class }}
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <div class="nav-arrows-{{ section.id }}">
+    <button class="arrow-{{ section.id }} prev-{{ section.id }}">&#10094;</button>
+    <button class="arrow-{{ section.id }} next-{{ section.id }}">&#10095;</button>
+  </div>
+
+  <div class="hero-content-{{ section.id }}">
+    <div>
+      <h1 class="hero-title-{{ section.id }}">{{ section.settings.heading }}</h1>
+      <p class="hero-subheading-{{ section.id }}">{{ section.settings.subheading }}</p>
+    </div>
+
+    <div class="bottom-row-{{ section.id }}">
+      <div class="hero-description-{{ section.id }}">
+      {{ section.settings.description }}
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="{{ section.settings.link_1 }}" class="hero-btn-{{ section.id }}">{{ section.settings.btn_text_1 }}</a>
+        <a href="{{ section.settings.link_2 }}" class="hero-btn-{{ section.id }}">{{ section.settings.btn_text_2 }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('#Hero-{{ section.id }}');
+    if (!container) return;
+
+    const slides = container.querySelectorAll('.hero-slide-{{ section.id }}');
+    const nextBtn = container.querySelector('.next-{{ section.id }}');
+    const prevBtn = container.querySelector('.prev-{{ section.id }}');
+    let currentSlide = 0;
+
+    if (slides.length <= 1) {
+        if(nextBtn) nextBtn.style.display = 'none';
+        if(prevBtn) prevBtn.style.display = 'none';
+        return;
+    }
+
+    function showSlide(index) {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (index + slides.length) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }
+
+    nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+    prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Jewelry Hero Slider",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "header", "content": "Content Settings" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Arlo & Co." },
+    { "type": "color", "id": "heading_color", "label": "Heading Color", "default": "#FFFFFF" },
+    { "type": "text", "id": "subheading", "label": "Sub-heading", "default": "POETRY IN PRECIOUS METAL" },
+    { "type": "color", "id": "subtext_color", "label": "Sub-heading Color", "default": "#FFFFFF" },
+    { "type": "textarea", "id": "description", "label": "Bottom Description", "default": "TRADITIONAL CRAFTSMANSHIP REIMAGINED FOR THE MODERN SILHOUETTE. BOLD GEOMETRY MEETS TIMELESS SOPHISTICATION.TRADITIONAL CRAFTSMANSHIP REIMAGINED FOR THE MODERN SILHOUETTE. BOLD GEOMETRY MEETS TIMELESS SOPHISTICATION." },
+    { "type": "color", "id": "description_color", "label": "Description Color", "default": "#FFFFFF" },
+    { "type": "header", "content": "Button 1" },
+    { "type": "text", "id": "btn_text_1", "label": "Text", "default": "Shop the Collection" },
+    { "type": "url", "id": "link_1", "label": "Link" },
+    { "type": "header", "content": "Button 2" },
+    { "type": "text", "id": "btn_text_2", "label": "Text", "default": "Explore Craft" },
+    { "type": "url", "id": "link_2", "label": "Link" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Slide Image" }
+      ]
+    }
+  ],
+  "presets": [
+    { 
+      "name": "Jewelry Hero Slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,2 @@
+Elegant Jewelry Hero Section
+Designed and coded a responsive, mobile-first hero slider for a high-end jewelry brand. By leveraging Shopify’s native Schema, I provided the client with a bespoke design tool that maintains 100% brand consistency while ensuring lightning-fast page load speeds.
